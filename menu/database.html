@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View LocalStorage</title>
+</head>
+<body>
+  <h1>View LocalStorage</h1>
+
+  <ul id="localStorageData"></ul>
+
+  <script>
+    // Retrieve and display localStorage data
+    function displayLocalStorage() {
+      const localStorageData = document.getElementById('localStorageData');
+      localStorageData.innerHTML = ''; // Clear previous data
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+
+        const listItem = document.createElement('li');
+        listItem.textContent = `${key}: ${value}`;
+        localStorageData.appendChild(listItem);
+      }
+    }
+
+    // Call the function to display localStorage data on page load
+    displayLocalStorage();
+  </script>
+
+</body>
+</html>

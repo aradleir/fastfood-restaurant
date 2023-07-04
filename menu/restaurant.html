@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Page</title>
+  <link rel="stylesheet" href="restaurant.css">
+</head>
+<body>
+  <h1>Restaurant Page</h1>
+<div>
+  <input placeholder="Table Number" id="tablenum" required>
+  <button onclick="generate()" class="btn">Generate and Print New Code</button>
+</div>
+<div>
+  <br>
+  <input placeholder="Item Code" id="codeInput1" required>
+  <button id="searchBtn">Search</button>
+</div>
+  <div>
+    <br>
+    <input id="delete" placeholder="Enter code to delete">
+    <button id="deleteBtn">Delete</button>
+  </div>
+  <div class="localstoragedelete">
+    <br>
+    <button id="localStorageDelete">Delete all the database</button>
+  </div>
+
+  <script>
+    // Generate a code and print it
+    function generate() {
+      const tableNum = document.getElementById("tablenum").value
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+let finalecode = '';
+for (let i = 0; i < 6; i++) {
+  if (i === 0) {
+    // Generate a letter for the first character
+    finalecode += characters.charAt(Math.floor(Math.random() * 26)); // Only consider the first 26 characters
+  } else {
+    // Generate any character (letter or number) for the remaining characters
+    finalecode += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+}
+const code = tableNum + finalecode
+
+      let codes = localStorage.getItem('authCodes');
+      if (codes) {
+        codes = JSON.parse(codes);
+      } else {
+        codes = [];
+      }
+
+      codes.push(code);
+      localStorage.setItem('authCodes', JSON.stringify(codes));
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write('<p>' + code + '</p>');
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    
+  
+  </script>
+  <script>
+  const deleteBtn = document.getElementById("deleteBtn")
+
+deleteBtn.addEventListener("click", () => {
+  const deleteText = document.getElementById("delete").value;
+  
+  // Retrieve and parse the authCodes array from localStorage
+  let authCodes = localStorage.getItem('authCodes');
+  if (authCodes) {
+    authCodes = JSON.parse(authCodes);
+  } else {
+    authCodes = [];
+  }
+  
+  // Remove the desired code from the array
+  const codeToRemove = deleteText;
+  if(authCodes.indexOf(codeToRemove)){
+    const indexToRemove = authCodes.indexOf(codeToRemove);
+  if (indexToRemove !== -1) {
+    authCodes.splice(indexToRemove, 1);
+  }
+
+  
+  // Save the modified array back to localStorage
+  localStorage.setItem('authCodes', JSON.stringify(authCodes));
+  alert(deleteText + " was removed from the database")
+ return 
+}else{
+  alert("That code isnt available to delete")
+
+
+}
+});
+
+  </script>
+  <script>
+    const btn = document.getElementById("localStorageDelete")
+    btn.addEventListener("click", () => {
+      localStorage.clear();
+      alert("The local storage got deleted")
+    })
+  </script>
+
+
+<script>
+
+
+
+ 
+document.addEventListener('DOMContentLoaded', function() {
+function search() {
+  const enteredCode = document.getElementById('codeInput1').value;
+  const tableData = localStorage.getItem(`${enteredCode}.items`);
+  console.log(enteredCode)
+  console.log(tableData)
+  if (tableData) {
+    const data = JSON.parse(tableData);
+
+
+   
+
+    // Generate the new HTML file
+    const htmlContent = `
+      <h1>Search Results</h1>
+      ${tableData}`;
+
+    // Create a Blob with the HTML content
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+
+    // Create a temporary link element
+    const newWindow = window.open('', '_blank');
+      newWindow.document.write(htmlContent);
+      newWindow.document.close();
+  } else {
+    console.log('No data found in localStorage');
+  }
+}
+
+const searchBtn = document.getElementById('searchBtn');
+searchBtn.addEventListener('click', search);
+
+})
+</script>
+</body>
+</html>
